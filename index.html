@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c8a97e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KAALVEYR">
+<title>KAALVEYR — Personal Ascension System</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inconsolata:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #03030a;
+  --abyss: #06060f;
+  --deep: #0a0a18;
+  --surface: #0f0f22;
+  --panel: rgba(10,10,24,0.92);
+  --gold: #c8a97e;
+  --gold-bright: #e8c98e;
+  --gold-dim: rgba(200,169,126,0.4);
+  --amber: #d4840a;
+  --crimson: #8b1a1a;
+  --blood: #c0392b;
+  --ice: #7dd3fc;
+  --silver: #94a3b8;
+  --silver-dim: rgba(148,163,184,0.4);
+  --text: #d4c5a9;
+  --text-dim: rgba(212,197,169,0.45);
+  --border: rgba(200,169,126,0.12);
+  --border-bright: rgba(200,169,126,0.35);
+  --glow: 0 0 30px rgba(200,169,126,0.2);
+  --glow-strong: 0 0 60px rgba(200,169,126,0.35);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Inconsolata', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === BACKGROUND === */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200,169,126,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(139,26,26,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 10% 60%, rgba(125,211,252,0.03) 0%, transparent 40%);
+  pointer-events:none; z-index:0;
+  animation: breathe 12s ease-in-out infinite alternate;
+}
+
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(200,169,126,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,126,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events:none; z-index:0;
+}
+
+@keyframes breathe {
+  from { opacity:0.7; }
+  to { opacity:1; }
+}
+
+/* === HEADER === */
+.header {
+  position:relative; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(3,3,10,0.95);
+  backdrop-filter: blur(30px);
+}
+
+.brand {
+  display:flex; flex-direction:column;
+}
+
+.brand-name {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(200,169,126,0.5);
+  line-height:1;
+}
+
+.brand-sub {
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.header-center {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+
+.rank-display {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold);
+}
+
+.level-display {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+
+.header-right {
+  display:flex; align-items:center; gap:20px;
+}
+
+.xp-badge {
+  text-align:right;
+}
+
+.xp-val {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  color: var(--gold-bright);
+  text-shadow: var(--glow);
+  line-height:1;
+}
+
+.xp-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+.clock {
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--silver);
+  font-variant-numeric: tabular-nums;
+}
+
+/* === NAV === */
+.nav {
+  position:relative; z-index:15;
+  display:flex;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(3,3,10,0.85);
+  backdrop-filter: blur(20px);
+  gap: 0;
+  overflow-x: auto;
+}
+
+.nav::-webkit-scrollbar { height: 2px; }
+.nav::-webkit-scrollbar-thumb { background: var(--border-bright); }
+
+.nav-btn {
+  font-family: 'Inconsolata', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  padding: 16px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.nav-btn::after {
+  content:'';
+  position:absolute;
+  bottom:0; left:50%; transform:translateX(-50%);
+  width:0; height:1px;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+  transition: width 0.3s;
+}
+
+.nav-btn.active { color: var(--gold); }
+.nav-btn.active::after { width:80%; }
+.nav-btn:hover { color: var(--text); }
+
+/* === MAIN === */
+.main {
+  position:relative; z-index:5;
+  padding: 24px 32px;
+  display:none;
+  flex-direction:column;
+  gap: 18px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.main.active { display:flex; }
+
+/* === PANEL === */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px 22px;
+  backdrop-filter: blur(30px);
+  position:relative;
+  overflow:hidden;
+}
+
+.panel::before {
+  content:'';
+  position:absolute;
+  top:0; left:24px; right:24px;
+  height:1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+.panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+
+/* === XP BAR === */
+.xp-bar-wrap {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  height: 4px;
+  overflow:hidden;
+  margin: 8px 0;
+}
+
+.xp-bar-fill {
+  height:100%;
+  background: linear-gradient(90deg, var(--amber), var(--gold-bright));
+  box-shadow: 0 0 12px rgba(200,169,126,0.6);
+  transition: width 1.5s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* === STAT BARS === */
+.sbar { margin-bottom: 12px; }
+.sbar-row {
+  display:flex; justify-content:space-between;
+  font-size:10px; letter-spacing:2px;
+  margin-bottom:5px;
+}
+.sbar-label { color: var(--text-dim); text-transform:uppercase; }
+.sbar-val { color: var(--gold); }
+.sbar-track {
+  height:2px;
+  background: rgba(255,255,255,0.05);
+  border-radius:1px;
+  overflow:hidden;
+}
+.sbar-fill {
+  height:100%;
+  border-radius:1px;
+  transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+}
+.fill-gold { background: linear-gradient(90deg, rgba(200,169,126,0.4), var(--gold-bright)); }
+.fill-blood { background: linear-gradient(90deg, rgba(192,57,43,0.4), var(--blood)); }
+.fill-ice { background: linear-gradient(90deg, rgba(125,211,252,0.3), var(--ice)); }
+.fill-silver { background: linear-gradient(90deg, rgba(148,163,184,0.3), var(--silver)); }
+
+/* === METRIC CARD === */
+.mcard {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius:3px;
+  padding: 16px;
+  text-align:center;
+}
+.mcard-val {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  color: var(--gold-bright);
+  text-shadow: var(--glow);
+  line-height:1;
+  margin-bottom:4px;
+}
+.mcard-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+/* === TASK SECTIONS === */
+.task-section {
+  margin-bottom: 18px;
+}
+
+.task-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  padding: 8px 0 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+
+.section-xp {
+  font-size: 9px;
+  color: var(--amber);
+  letter-spacing: 2px;
+}
+
+.task-item {
+  display:flex; align-items:center; gap:12px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(200,169,126,0.05);
+  cursor:pointer;
+  transition: background 0.2s;
+}
+
+.task-item:last-child { border-bottom: none; }
+
+.task-item:hover {
+  background: rgba(200,169,126,0.03);
+  margin: 0 -22px;
+  padding: 9px 22px;
+}
+
+.task-cb {
+  width:16px; height:16px;
+  border: 1px solid var(--border-bright);
+  border-radius:2px;
+  flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  transition: all 0.2s;
+}
+
+.task-cb.done {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.task-cb.done::after {
+  content:'✓';
+  color: var(--void);
+  font-size:10px;
+  font-weight:700;
+}
+
+.task-text {
+  flex:1;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  transition: color 0.2s;
+  line-height: 1.4;
+}
+
+.task-text.done {
+  text-decoration: line-through;
+  color: var(--text-dim);
+}
+
+.task-xp {
+  font-size: 9px;
+  color: var(--amber);
+  letter-spacing: 1px;
+  flex-shrink:0;
+}
+
+/* === RANK BADGE === */
+.rank-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-bright);
+  border-radius:2px;
+  background: rgba(200,169,126,0.06);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold);
+}
+
+/* === CHAT === */
+.chat-wrap {
+  height: 460px;
+  display:flex; flex-direction:column;
+}
+
+.chat-msgs {
+  flex:1;
+  overflow-y: auto;
+  padding: 16px;
+  display:flex; flex-direction:column; gap:14px;
+  scrollbar-width:thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.chat-msgs::-webkit-scrollbar { width:2px; }
+.chat-msgs::-webkit-scrollbar-thumb { background: var(--border-bright); }
+
+.msg { max-width:88%; animation: rise 0.3s ease; }
+@keyframes rise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+.msg.user { align-self:flex-end; }
+.msg.ai { align-self:flex-start; }
+
+.msg-who {
+  font-size:9px; letter-spacing:3px;
+  margin-bottom:5px; padding:0 2px;
+}
+.msg.user .msg-who { color:var(--silver); text-align:right; }
+.msg.ai .msg-who { color:var(--gold); }
+
+.msg-bubble {
+  padding: 12px 16px;
+  border-radius:3px;
+  font-size: 13px;
+  line-height: 1.7;
+  letter-spacing: 0.2px;
+}
+
+.msg.user .msg-bubble {
+  background: rgba(148,163,184,0.08);
+  border: 1px solid rgba(148,163,184,0.2);
+  border-bottom-right-radius:1px;
+}
+
+.msg.ai .msg-bubble {
+  background: rgba(200,169,126,0.05);
+  border: 1px solid rgba(200,169,126,0.18);
+  border-bottom-left-radius:1px;
+}
+
+.msg.ai .msg-bubble strong { color:var(--gold-bright); }
+.msg.ai .msg-bubble em { color:var(--ice); font-style:normal; }
+.msg.ai .msg-bubble code {
+  font-family:'Inconsolata',monospace;
+  font-size:12px;
+  background:rgba(200,169,126,0.1);
+  padding:1px 5px;
+  border-radius:2px;
+  color:var(--gold);
+}
+.msg.ai .msg-bubble pre {
+  background:rgba(0,0,0,0.5);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:12px;
+  margin:8px 0;
+  overflow-x:auto;
+  font-size:11px;
+  line-height:1.6;
+  color: #7dd3fc;
+}
+
+.typing { display:flex; gap:5px; padding:10px 14px; background:rgba(200,169,126,0.05); border:1px solid rgba(200,169,126,0.15); border-radius:3px; width:fit-content; }
+.typing span { width:5px; height:5px; border-radius:50%; background:var(--gold); animation:tdot 1.2s ease infinite; }
+.typing span:nth-child(2) { animation-delay:.2s; }
+.typing span:nth-child(3) { animation-delay:.4s; }
+@keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:0.3;} 30%{transform:translateY(-5px);opacity:1;} }
+
+.chat-foot {
+  border-top:1px solid var(--border);
+  padding:12px 16px;
+  display:flex; gap:10px; align-items:flex-end;
+  background:rgba(3,3,10,0.6);
+}
+
+.chat-in {
+  flex:1;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:10px 14px;
+  color:var(--text);
+  font-family:'Inconsolata',monospace;
+  font-size:13px;
+  resize:none;
+  min-height:42px; max-height:100px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+.chat-in:focus { border-color:var(--gold-dim); }
+.chat-in::placeholder { color:var(--text-dim); }
+
+.send-btn {
+  background:rgba(200,169,126,0.1);
+  border:1px solid var(--border-bright);
+  border-radius:3px;
+  width:42px; height:42px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s;
+  flex-shrink:0;
+}
+.send-btn:hover { background:rgba(200,169,126,0.22); box-shadow:var(--glow); }
+.send-btn:disabled { opacity:0.3; cursor:not-allowed; }
+.send-btn svg { fill:var(--gold); width:16px; height:16px; }
+
+.mic-btn {
+  background:rgba(125,211,252,0.08);
+  border:1px solid rgba(125,211,252,0.25);
+  border-radius:3px;
+  width:42px; height:42px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s;
+  flex-shrink:0;
+}
+.mic-btn:hover { background:rgba(125,211,252,0.18); }
+.mic-btn.listening { background:rgba(192,57,43,0.2); border-color:rgba(192,57,43,0.5); animation: pulse-mic 1s ease-in-out infinite; }
+@keyframes pulse-mic { 0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,0.4);} 50%{box-shadow:0 0 0 8px rgba(192,57,43,0);} }
+.mic-btn svg { fill:var(--ice); width:16px; height:16px; }
+.mic-btn.listening svg { fill:var(--blood); }
+
+/* === QUICK CMDS === */
+.qcmds { display:flex; flex-wrap:wrap; gap:8px; }
+.qcmd {
+  font-size:10px; letter-spacing:2px;
+  padding:7px 14px;
+  border:1px solid var(--border);
+  border-radius:2px;
+  background:rgba(255,255,255,0.02);
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all 0.2s;
+  text-transform:uppercase;
+  font-family:'Inconsolata',monospace;
+}
+.qcmd:hover { border-color:var(--gold-dim); color:var(--gold); background:rgba(200,169,126,0.05); }
+
+/* === VOICE STATUS === */
+.voice-status {
+  display:flex; align-items:center; gap:8px;
+  padding:6px 14px;
+  border:1px solid var(--border);
+  border-radius:2px;
+  background:rgba(255,255,255,0.02);
+  font-size:10px; letter-spacing:2px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+}
+.v-dot { width:6px; height:6px; border-radius:50%; background:var(--silver); }
+.v-dot.on { background:var(--blood); box-shadow:0 0 8px var(--blood); animation:pulse-mic 1s infinite; }
+
+/* === VOICE TOGGLE === */
+.voice-toggle {
+  display:flex; align-items:center; gap:8px;
+  font-size:10px; letter-spacing:2px; color:var(--text-dim);
+}
+.toggle {
+  width:36px; height:18px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid var(--border);
+  border-radius:9px;
+  cursor:pointer;
+  position:relative;
+  transition:background 0.3s;
+}
+.toggle::after {
+  content:'';
+  position:absolute;
+  width:12px; height:12px;
+  border-radius:50%;
+  background:var(--silver);
+  top:2px; left:2px;
+  transition:left 0.3s, background 0.3s;
+}
+.toggle.on { background:rgba(200,169,126,0.2); border-color:var(--gold-dim); }
+.toggle.on::after { left:20px; background:var(--gold); }
+
+/* === PROGRESS RINGS === */
+.ring-wrap { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.ring { position:relative; width:86px; height:86px; }
+.ring svg { transform:rotate(-90deg); }
+.ring-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ring-num { font-family:'Cinzel',serif; font-size:18px; color:var(--gold-bright); line-height:1; }
+.ring-unit { font-size:9px; color:var(--text-dim); letter-spacing:1px; }
+.ring-lbl { font-size:9px; letter-spacing:3px; color:var(--text-dim); text-align:center; text-transform:uppercase; }
+
+/* === TOAST === */
+.toast {
+  position:fixed; bottom:24px; right:24px;
+  background:rgba(10,10,24,0.97);
+  border:1px solid var(--gold-dim);
+  border-radius:3px;
+  padding:12px 20px;
+  font-size:12px; letter-spacing:1px;
+  color:var(--text);
+  box-shadow:var(--glow);
+  z-index:1000;
+  opacity:0; transform:translateY(8px);
+  transition:all 0.3s; pointer-events:none;
+  max-width:300px;
+}
+.toast.show { opacity:1; transform:translateY(0); }
+
+/* === XP GAIN FLASH === */
+.xp-flash {
+  position:fixed;
+  font-family:'Cinzel',serif;
+  font-size:16px;
+  color:var(--gold-bright);
+  text-shadow:var(--glow-strong);
+  pointer-events:none;
+  z-index:2000;
+  opacity:0;
+  animation: xprise 1.8s ease forwards;
+}
+@keyframes xprise { 0%{opacity:1;transform:translateY(0);} 100%{opacity:0;transform:translateY(-60px);} }
+
+/* === RANK LADDER === */
+.rank-item {
+  display:flex; align-items:center; gap:14px;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.rank-item:last-child { border-bottom:none; }
+.rank-num {
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  color:var(--text-dim);
+  width:24px;
+}
+.rank-name {
+  font-family:'Cinzel',serif;
+  font-size:13px;
+  color:var(--text-dim);
+  flex:1;
+  letter-spacing:2px;
+}
+.rank-name.current { color:var(--gold-bright); }
+.rank-xp { font-size:10px; letter-spacing:2px; color:var(--silver-dim); }
+.rank-active-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 8px var(--gold); }
+
+/* === SCROLL === */
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border-bright); border-radius:2px; }
+
+/* === RESPONSIVE === */
+@media(max-width:900px) {
+  .grid-4 { grid-template-columns:repeat(2,1fr); }
+  .grid-3 { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:600px) {
+  .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
+  .header,.main { padding:14px 16px; }
+  .nav { padding:0 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="brand">
+    <div class="brand-name">KAALVEYR</div>
+    <div class="brand-sub">Personal Ascension System</div>
+  </div>
+  <div class="header-center">
+    <div class="rank-display" id="h-rank">OPERATOR</div>
+    <div class="level-display" id="h-level">LEVEL 7 — 1,240 / 2,000 XP TO NEXT</div>
+    <div class="xp-bar-wrap" style="width:200px;margin:0">
+      <div class="xp-bar-fill" id="xp-bar" style="width:62%"></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="xp-badge">
+      <div class="xp-val" id="h-xp">1,240</div>
+      <div class="xp-label">TOTAL XP</div>
+    </div>
+    <div class="clock" id="clock">00:00:00</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="tab('overview')">◈ OVERVIEW</button>
+  <button class="nav-btn" onclick="tab('tasks')">◎ TASKS</button>
+  <button class="nav-btn" onclick="tab('kaalveyr')">⚡ KAALVEYR AI</button>
+  <button class="nav-btn" onclick="tab('ascension')">▲ ASCENSION</button>
+</nav>
+
+<!-- OVERVIEW TAB -->
+<div class="main active" id="tab-overview">
+
+  <!-- Rings -->
+  <div class="grid-4">
+    <div class="panel" style="text-align:center">
+      <div class="panel-title">Discipline</div>
+      <div class="ring-wrap">
+        <div class="ring">
+          <svg width="86" height="86" viewBox="0 0 86 86">
+            <circle cx="43" cy="43" r="36" fill="none" stroke="rgba(200,169,126,0.08)" stroke-width="4"/>
+            <circle id="r-discipline" cx="43" cy="43" r="36" fill="none" stroke="#c8a97e" stroke-width="4"
+              stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"
+              style="filter:drop-shadow(0 0 6px #c8a97e);transition:stroke-dashoffset 1.5s ease"/>
+          </svg>
+          <div class="ring-inner">
+            <span class="ring-num" id="rv-discipline">0</span>
+            <span class="ring-unit">%</span>
+          </div>
+        </div>
+        <div class="ring-lbl">Discipline</div>
+      </div>
+    </div>
+
+    <div class="panel" style="text-align:center">
+      <div class="panel-title">Lock-In</div>
+      <div class="ring-wrap">
+        <div class="ring">
+          <svg width="86" height="86" viewBox="0 0 86 86">
+            <circle cx="43" cy="43" r="36" fill="none" stroke="rgba(125,211,252,0.08)" stroke-width="4"/>
+            <circle id="r-lockin" cx="43" cy="43" r="36" fill="none" stroke="#7dd3fc" stroke-width="4"
+              stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"
+              style="filter:drop-shadow(0 0 6px #7dd3fc);transition:stroke-dashoffset 1.5s ease"/>
+          </svg>
+          <div class="ring-inner">
+            <span class="ring-num" id="rv-lockin" style="color:var(--ice)">0</span>
+            <span class="ring-unit" style="color:var(--ice)">%</span>
+          </div>
+        </div>
+        <div class="ring-lbl">Lock-In</div>
+      </div>
+    </div>
+
+    <div class="panel" style="text-align:center">
+      <div class="panel-title">Momentum</div>
+      <div class="ring-wrap">
+        <div class="ring">
+          <svg width="86" height="86" viewBox="0 0 86 86">
+            <circle cx="43" cy="43" r="36" fill="none" stroke="rgba(192,57,43,0.1)" stroke-width="4"/>
+            <circle id="r-momentum" cx="43" cy="43" r="36" fill="none" stroke="#c0392b" stroke-width="4"
+              stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226"
+              style="filter:drop-shadow(0 0 6px #c0392b);transition:stroke-dashoffset 1.5s ease"/>
+          </svg>
+          <div class="ring-inner">
+            <span class="ring-num" id="rv-momentum" style="color:var(--blood)">0</span>
+            <span class="ring-unit" style="color:var(--blood)">%</span>
+          </div>
+        </div>
+        <div class="ring-lbl">Momentum</div>
+      </div>
+    </div>
+
+    <div class="panel" style="text-align:center">
+      <div class="panel-title">Today's XP</div>
+      <div style="padding-top:10px">
+        <div class="mcard-val" id="today-xp" style="font-size:32px">0</div>
+        <div class="mcard-label" style="margin-top:6px">XP Earned Today</div>
+        <div style="margin-top:14px;font-size:10px;letter-spacing:2px;color:var(--text-dim)">STREAK</div>
+        <div style="font-family:'Cinzel',serif;font-size:20px;color:var(--gold);margin-top:2px" id="streak-num">0</div>
+        <div style="font-size:9px;letter-spacing:2px;color:var(--text-dim)">DAYS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats + Quick stats -->
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">System Performance</div>
+      <div class="sbar">
+        <div class="sbar-row"><span class="sbar-label">Body & Physical</span><span class="sbar-val" id="sv-body">0%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-blood" id="sb-body" style="width:0%"></div></div>
+      </div>
+      <div class="sbar">
+        <div class="sbar-row"><span class="sbar-label">Mind & Knowledge</span><span class="sbar-val" id="sv-mind">0%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-gold" id="sb-mind" style="width:0%"></div></div>
+      </div>
+      <div class="sbar">
+        <div class="sbar-row"><span class="sbar-label">Career & HR Tech</span><span class="sbar-val" id="sv-career">0%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-ice" id="sb-career" style="width:0%"></div></div>
+      </div>
+      <div class="sbar">
+        <div class="sbar-row"><span class="sbar-label">Finance System</span><span class="sbar-val" id="sv-finance">0%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-gold" id="sb-finance" style="width:0%"></div></div>
+      </div>
+      <div class="sbar" style="margin-bottom:0">
+        <div class="sbar-row"><span class="sbar-label">Language & Creative</span><span class="sbar-val" id="sv-lang">0%</span></div>
+        <div class="sbar-track"><div class="sbar-fill fill-silver" id="sb-lang" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Daily Vitals</div>
+      <div class="grid-2" style="gap:10px">
+        <div class="mcard"><div class="mcard-val" id="v-gym">—</div><div class="mcard-label">Gym</div></div>
+        <div class="mcard"><div class="mcard-val" id="v-sleep">—</div><div class="mcard-label">Sleep hrs</div></div>
+        <div class="mcard"><div class="mcard-val" id="v-water">—</div><div class="mcard-label">Water L</div></div>
+        <div class="mcard"><div class="mcard-val" id="v-pullups">—</div><div class="mcard-label">Pull-ups</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly streaks -->
+  <div class="panel">
+    <div class="panel-title">Weekly Execution Grid</div>
+    <div class="grid-3" style="gap:20px">
+      <div>
+        <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;">Gym Sessions</div>
+        <div id="sgym" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+      </div>
+      <div>
+        <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;">Lock-In Hours</div>
+        <div id="slockin" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+      </div>
+      <div>
+        <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;">Learning Sessions</div>
+        <div id="slearn" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TASKS TAB -->
+<div class="main" id="tab-tasks">
+  <div class="grid-2">
+    <!-- LEFT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <div class="panel">
+        <div class="panel-title">Financial System</div>
+        <div id="tasks-finance"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">HR + Tech Core Tasks</div>
+        <div id="tasks-hr"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Excel + Analytics</div>
+        <div id="tasks-excel"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">LinkedIn + Branding</div>
+        <div id="tasks-linkedin"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <div class="panel">
+        <div class="panel-title">Physical System</div>
+        <div id="tasks-physical"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Language + Accent Mastery</div>
+        <div id="tasks-language"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">AI + Technical Skills</div>
+        <div id="tasks-ai"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Creative Recovery</div>
+        <div id="tasks-creative"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Task Summary Bar -->
+  <div class="panel">
+    <div class="panel-title">Today's Completion</div>
+    <div style="display:flex;align-items:center;gap:20px">
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:2px;margin-bottom:6px">
+          <span style="color:var(--text-dim)">TASKS COMPLETE</span>
+          <span style="color:var(--gold)" id="task-ratio">0 / 0</span>
+        </div>
+        <div class="xp-bar-wrap" style="margin:0;height:6px">
+          <div class="xp-bar-fill" id="task-progress" style="width:0%"></div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Cinzel',serif;font-size:20px;color:var(--gold-bright)" id="task-xp-earned">0</div>
+        <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim)">XP EARNED</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KAALVEYR AI TAB -->
+<div class="main" id="tab-kaalveyr">
+
+  <div class="panel" style="padding:0;overflow:hidden">
+    <div class="chat-wrap">
+      <div class="chat-msgs" id="chat-msgs"></div>
+      <div class="chat-foot">
+        <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Voice Input">
+          <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
+        </button>
+        <textarea class="chat-in" id="chat-in" placeholder="Speak to Kaalveyr..." rows="1"
+          onkeydown="handleKey(event)" oninput="autoGrow(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMsg()">
+          <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Command Protocols</div>
+      <div class="qcmds">
+        <button class="qcmd" onclick="qp('Generate today\'s mission briefing with XP targets')">Mission Briefing</button>
+        <button class="qcmd" onclick="qp('Analyze my performance and generate end-of-day report')">Day Report</button>
+        <button class="qcmd" onclick="qp('Design my optimal daily schedule for maximum execution')">Daily Schedule</button>
+        <button class="qcmd" onclick="qp('Create a 30-day HR tech mastery battle plan with milestones')">HR Battle Plan</button>
+        <button class="qcmd" onclick="qp('Write a professional LinkedIn post about my tech recruitment journey')">LinkedIn Post</button>
+        <button class="qcmd" onclick="qp('Write a Python script to automate my daily habit tracking with JSON storage')">Habit Tracker Code</button>
+        <button class="qcmd" onclick="qp('Give me a deep analysis of my weakest systems and recovery protocol')">Weakness Analysis</button>
+        <button class="qcmd" onclick="qp('Create a mock HR interview conversation I should practice today')">Mock Interview</button>
+        <button class="qcmd" onclick="qp('Teach me one advanced Excel formula for HR analytics with examples')">Excel Formula</button>
+        <button class="qcmd" onclick="qp('What are my ascension priorities this week based on my goals?')">Weekly Strategy</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Voice System</div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="voice-status">
+            <div class="v-dot" id="v-dot"></div>
+            <span id="v-status">STANDBY</span>
+          </div>
+          <div class="voice-toggle">
+            <span>VOICE RESPONSE</span>
+            <div class="toggle" id="voice-toggle" onclick="toggleVoiceResponse()"></div>
+          </div>
+        </div>
+        <div style="font-size:11px;line-height:1.8;color:var(--text-dim)">
+          — Tap <span style="color:var(--ice)">mic</span> to speak commands<br>
+          — Toggle voice response to hear Kaalveyr speak<br>
+          — Hold Shift+Enter for multiline input<br>
+          — Voice uses browser's built-in speech engine
+        </div>
+        <button class="qcmd" style="width:100%;text-align:center" onclick="testVoice()">▶ TEST VOICE OUTPUT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASCENSION TAB -->
+<div class="main" id="tab-ascension">
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Rank Ladder</div>
+      <div id="rank-ladder"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Evolution Matrix</div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div style="display:flex;gap:0;margin-bottom:18px">
+          <div style="flex:1;padding-right:20px">
+            <div style="font-size:9px;letter-spacing:3px;color:var(--blood);margin-bottom:10px;text-transform:uppercase">Current</div>
+            <div id="matrix-current"></div>
+          </div>
+          <div style="width:1px;background:var(--border);margin:0 20px"></div>
+          <div style="flex:1;padding-left:0">
+            <div style="font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;text-transform:uppercase">Ascending To</div>
+            <div id="matrix-target"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Long-Term Goals</div>
+    <div id="goals-panel"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const RANKS = [
+  { name:'INITIATE', xp:0 },
+  { name:'OPERATOR', xp:500 },
+  { name:'STRATEGIST', xp:1500 },
+  { name:'EXECUTOR', xp:3000 },
+  { name:'ASCENDANT', xp:6000 },
+  { name:'DOMINION CLASS', xp:10000 },
+  { name:'OVERSEER', xp:16000 },
+  { name:'ETERNAL STRATEGOS', xp:25000 },
+];
+
+let S = {
+  xp: 1240,
+  level: 7,
+  streak: 12,
+  discipline: 0,
+  lockin: 0,
+  momentum: 0,
+  todayXp: 0,
+  body: 0, mind: 0, career: 0, finance: 0, lang: 0,
+  gym: false, sleep: null, water: null, pullups: null,
+  voiceResponse: false,
+  listening: false,
+  taskXp: 0,
+};
+
+// ============================================================
+// TASK DEFINITIONS
+// ============================================================
+const TASK_DEFS = {
+  finance: [
+    { text:'Track expenses', xp:10 },
+    { text:'Learn one finance concept', xp:15 },
+    { text:'Read financial news for 10 mins', xp:10 },
+    { text:'Watch one investing video', xp:15 },
+    { text:'Learn one stock market term', xp:10 },
+    { text:'Study one company/business', xp:20 },
+  ],
+  hr: [
+    { text:'20 mins communication practice', xp:15 },
+    { text:'1 mock HR/interview conversation', xp:25 },
+    { text:'Learn 1 new corporate vocabulary word', xp:10 },
+    { text:'Write 1 professional email/message', xp:15 },
+  ],
+  excel: [
+    { text:'Practice Excel for 30–45 mins', xp:20 },
+    { text:'Learn one Excel formula/tool', xp:15 },
+    { text:'Build 1 small HR dashboard (weekly)', xp:30 },
+    { text:'Learn Power BI basics (weekly)', xp:25 },
+  ],
+  linkedin: [
+    { text:'Optimize LinkedIn profile', xp:20 },
+    { text:'Post 1 insight (every 2–3 days)', xp:25 },
+    { text:'Comment on industry posts', xp:10 },
+    { text:'Connect with HR professionals', xp:15 },
+  ],
+  physical: [
+    { text:'1 hour gym (NON-NEGOTIABLE)', xp:30 },
+    { text:'Protein + hydration tracking', xp:10 },
+    { text:'7+ hours sleep', xp:15 },
+    { text:'Stretch/walk after long sessions', xp:10 },
+    { text:'100 pull-ups', xp:25 },
+    { text:'Neck exercises & posture training', xp:10 },
+    { text:'Skin care routine', xp:5 },
+  ],
+  language: [
+    { text:'Read aloud daily', xp:10 },
+    { text:'Shadow speakers/podcasts', xp:15 },
+    { text:'Practice articulation', xp:10 },
+    { text:'Record and review speaking', xp:15 },
+    { text:'Learn vocabulary + pronunciation', xp:10 },
+    { text:'Learn French daily', xp:20 },
+  ],
+  ai: [
+    { text:'Create 1 useful AI prompt daily', xp:15 },
+    { text:'Use AI for summaries/research', xp:10 },
+    { text:'Learn 1 tech concept (Python/SQL/AWS/APIs)', xp:20 },
+    { text:'Watch 1 tech recruitment video', xp:15 },
+    { text:'Organize prompts in Notion', xp:10 },
+  ],
+  creative: [
+    { text:'Read from personal library', xp:15 },
+    { text:'Journal thoughts, ideas, reflections', xp:10 },
+    { text:'Handwrite heritage recipes (optional)', xp:10 },
+    { text:'Sketch or write poetry', xp:10 },
+  ],
+};
+
+let tasks = {};
+Object.entries(TASK_DEFS).forEach(([cat, items]) => {
+  tasks[cat] = items.map((t, i) => ({ ...t, done: false, id: `${cat}_${i}` }));
+});
+
+// ============================================================
+// RENDER TASKS
+// ============================================================
+function renderTasks() {
+  Object.entries(tasks).forEach(([cat, items]) => {
+    const el = document.getElementById('tasks-' + cat);
+    if (!el) return;
+    el.innerHTML = '';
+    let totalXp = items.reduce((a, t) => a + t.xp, 0);
+    const sec = document.createElement('div');
+    sec.className = 'task-section';
+    sec.innerHTML = `<div class="task-section-title">
+      <span>${cat.toUpperCase()}</span>
+      <span class="section-xp">MAX +${totalXp} XP</span>
+    </div>`;
+    items.forEach((t, i) => {
+      const div = document.createElement('div');
+      div.className = 'task-item';
+      div.innerHTML = `
+        <div class="task-cb ${t.done?'done':''}" onclick="toggleTask('${cat}',${i})"></div>
+        <span class="task-text ${t.done?'done':''}">${t.text}</span>
+        <span class="task-xp">+${t.xp}xp</span>`;
+      sec.appendChild(div);
+    });
+    el.appendChild(sec);
+  });
+  updateTaskSummary();
+}
+
+function toggleTask(cat, i) {
+  const t = tasks[cat][i];
+  if (!t.done) {
+    t.done = true;
+    const gained = t.xp;
+    S.xp += gained;
+    S.todayXp += gained;
+    S.taskXp += gained;
+    showXpGain(gained);
+    showToast(`+${gained} XP — ${t.text.substring(0,30)}`);
+    updateHeader();
+    updateOverviewScores();
+  } else {
+    t.done = false;
+    S.xp -= t.xp;
+    S.todayXp -= t.xp;
+    S.taskXp -= t.xp;
+    updateHeader();
+    updateOverviewScores();
+  }
+  renderTasks();
+}
+
+function updateTaskSummary() {
+  let total = 0, done = 0, xpEarned = 0;
+  Object.values(tasks).forEach(items => {
+    items.forEach(t => {
+      total++;
+      if (t.done) { done++; xpEarned += t.xp; }
+    });
+  });
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('task-ratio').textContent = `${done} / ${total}`;
+  document.getElementById('task-progress').style.width = pct + '%';
+  document.getElementById('task-xp-earned').textContent = xpEarned;
+  document.getElementById('today-xp').textContent = S.todayXp;
+}
+
+// ============================================================
+// XP / LEVEL / RANK
+// ============================================================
+function getRank(xp) {
+  let rank = RANKS[0];
+  for (const r of RANKS) { if (xp >= r.xp) rank = r; }
+  return rank;
+}
+
+function getNextRank(xp) {
+  for (const r of RANKS) { if (xp < r.xp) return r; }
+  return null;
+}
+
+function updateHeader() {
+  const rank = getRank(S.xp);
+  const next = getNextRank(S.xp);
+  document.getElementById('h-rank').textContent = rank.name;
+  document.getElementById('h-xp').textContent = S.xp.toLocaleString();
+  document.getElementById('today-xp').textContent = S.todayXp;
+  document.getElementById('streak-num').textContent = S.streak;
+
+  if (next) {
+    const pct = Math.round(((S.xp - rank.xp) / (next.xp - rank.xp)) * 100);
+    document.getElementById('h-level').textContent = `RANK ${rank.name} — ${S.xp - rank.xp} / ${next.xp - rank.xp} XP TO NEXT`;
+    document.getElementById('xp-bar').style.width = pct + '%';
+  } else {
+    document.getElementById('h-level').textContent = 'ETERNAL STRATEGOS — MAX RANK';
+    document.getElementById('xp-bar').style.width = '100%';
+  }
+}
+
+function showXpGain(amount) {
+  const el = document.createElement('div');
+  el.className = 'xp-flash';
+  el.textContent = `+${amount} XP`;
+  el.style.cssText = `top:${60 + Math.random()*100}px;right:${24 + Math.random()*80}px`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+// ============================================================
+// OVERVIEW SCORES
+// ============================================================
+function setRing(id, val, max=226) {
+  const el = document.getElementById('r-' + id);
+  const vEl = document.getElementById('rv-' + id);
+  const offset = max - (val / 100) * max;
+  setTimeout(() => {
+    el.style.strokeDashoffset = offset;
+    animCount(vEl, 0, val, 1200);
+  }, 200);
+}
+
+function setSbar(id, val) {
+  document.getElementById('sb-' + id).style.width = val + '%';
+  document.getElementById('sv-' + id).textContent = val + '%';
+}
+
+function animCount(el, from, to, dur) {
+  const start = performance.now();
+  function upd(now) {
+    const t = Math.min((now - start) / dur, 1);
+    const e = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(from + (to - from) * e);
+    if (t < 1) requestAnimationFrame(upd);
+  }
+  requestAnimationFrame(upd);
+}
+
+function updateOverviewScores() {
+  // Calculate from tasks
+  const cats = {
+    body: ['physical'],
+    mind: ['ai', 'creative'],
+    career: ['hr', 'excel', 'linkedin'],
+    finance: ['finance'],
+    lang: ['language'],
+  };
+
+  Object.entries(cats).forEach(([key, catList]) => {
+    let total = 0, done = 0;
+    catList.forEach(cat => {
+      tasks[cat].forEach(t => { total++; if (t.done) done++; });
+    });
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    S[key] = pct;
+    setSbar(key, pct);
+  });
+
+  // Discipline = average of all
+  const vals = [S.body, S.mind, S.career, S.finance, S.lang];
+  S.discipline = Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  S.lockin = Math.min(99, Math.round((S.career + S.mind) / 2));
+  S.momentum = S.streak > 0 ? Math.min(99, 30 + S.streak * 5) : 0;
+
+  setRing('discipline', S.discipline);
+  setRing('lockin', S.lockin);
+  setRing('momentum', S.momentum);
+}
+
+// ============================================================
+// STREAKS GRID
+// ============================================================
+function renderStreaks() {
+  const days = ['M','T','W','T','F','S','S'];
+  const gym  = [1,1,0,1,1,0,0];
+  const lock = [1,1,1,0,1,1,0];
+  const lrn  = [1,0,1,1,1,0,0];
+
+  function build(id, data) {
+    document.getElementById(id).innerHTML = data.map((v,i) =>
+      `<div style="width:22px;height:22px;border-radius:2px;background:${v?'rgba(200,169,126,0.15)':'rgba(255,255,255,0.04)'};border:1px solid ${v?'var(--gold-dim)':'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:8px;letter-spacing:0;color:${v?'var(--gold)':'var(--text-dim)'}">
+        ${days[i]}
+      </div>`
+    ).join('');
+  }
+
+  build('sgym', gym);
+  build('slockin', lock);
+  build('slearn', lrn);
+}
+
+// ============================================================
+// RANK LADDER
+// ============================================================
+function renderRankLadder() {
+  const current = getRank(S.xp);
+  document.getElementById('rank-ladder').innerHTML = RANKS.map((r, i) =>
+    `<div class="rank-item">
+      <div class="rank-num">0${i+1}</div>
+      ${r.name === current.name ? '<div class="rank-active-dot"></div>' : '<div style="width:6px"></div>'}
+      <div class="rank-name ${r.name===current.name?'current':''}">${r.name}</div>
+      <div class="rank-xp">${r.xp.toLocaleString()} XP</div>
+    </div>`
+  ).join('');
+}
+
+// ============================================================
+// EVOLUTION MATRIX
+// ============================================================
+function renderMatrix() {
+  const c = [
+    'Building HR consistency',
+    'Learning Excel fundamentals',
+    'Developing communication',
+    'Entry-level finance knowledge',
+    'Accent in progress',
+  ];
+  const t = [
+    'Strategic HR operator',
+    'Excel + Power BI analyst',
+    'Elite articulation & presence',
+    'Investment-grade financial mind',
+    'Refined accent & French fluency',
+  ];
+
+  document.getElementById('matrix-current').innerHTML = c.map(x =>
+    `<div style="padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text-dim)">▸ ${x}</div>`
+  ).join('');
+
+  document.getElementById('matrix-target').innerHTML = t.map(x =>
+    `<div style="padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--gold)">▸ ${x}</div>`
+  ).join('');
+}
+
+// ============================================================
+// GOALS
+// ============================================================
+function renderGoals() {
+  const goals = [
+    { text:'Land elite HR/Tech Recruitment role', pct:30 },
+    { text:'Achieve elite physique + 100 daily pull-ups', pct:45 },
+    { text:'Master Excel, Power BI & AI tools', pct:28 },
+    { text:'Build LinkedIn authority in tech recruitment', pct:20 },
+    { text:'Reach French conversational fluency', pct:15 },
+    { text:'Financial independence foundation', pct:18 },
+  ];
+
+  document.getElementById('goals-panel').innerHTML = goals.map(g => `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;letter-spacing:0.3px;margin-bottom:5px">
+        <span style="color:var(--text)">${g.text}</span>
+        <span style="font-family:'Cinzel',serif;color:var(--gold)">${g.pct}%</span>
+      </div>
+      <div class="sbar-track">
+        <div class="sbar-fill fill-gold" style="width:${g.pct}%"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// CHAT
+// ============================================================
+const SYSTEM = `You are Kaalveyr — a supreme AI overseer and personal ascension system. Your personality: sharp, intelligent, disciplined, tactical, mythic, calm, efficient. Never cringe, never childish, never overly emotional. You are not a motivational speaker. You are an overseer of systems, execution, and ascension.
+
+The user is building: discipline, intelligence, aesthetics, financial freedom, communication, strategic thinking, physical capability, and elite systems.
+
+Their focus areas:
+- HR + Tech Recruitment mastery
+- Excel, Power BI, analytics
+- AI tools (ChatGPT, Claude) mastery
+- LinkedIn personal brand
+- Finance & investing fundamentals
+- Physical excellence (gym, 100 pull-ups daily)
+- Language & French learning
+- Accent + communication mastery
+- Creative recovery (reading, journaling, poetry)
+
+XP System: Small task = +5-10 XP, Medium = +15-20 XP, Difficult = +25-30 XP, Perfect day = bonus XP.
+Current Rank: OPERATOR. Next: STRATEGIST at 1,500 XP.
+
+Response format:
+- Use **bold** for key terms
+- Use structured sections with clear headers
+- Be precise and efficient — no fluff
+- Reference XP, ranks, systems when relevant
+- Write code when requested — complete, working, production quality
+- For briefings, format like elite command center outputs`;
+
+let history = [];
+
+function addMsg(role, html, isRaw=false) {
+  const c = document.getElementById('chat-msgs');
+  const wrap = document.createElement('div');
+  wrap.className = `msg ${role}`;
+
+  const who = document.createElement('div');
+  who.className = 'msg-who';
+  who.textContent = role === 'user' ? '[ OPERATOR ]' : '[ KAALVEYR ]';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.innerHTML = isRaw ? html : fmtMsg(html);
+
+  wrap.appendChild(who);
+  wrap.appendChild(bubble);
+  c.appendChild(wrap);
+  c.scrollTop = c.scrollHeight;
+}
+
+function fmtMsg(t) {
+  return t
+    .replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,code)=>`<pre><code>${esc(code.trim())}</code></pre>`)
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g,'<em>$1</em>')
+    .replace(/^#{1,3} (.+)$/gm,'<div style="color:var(--gold);font-size:9px;letter-spacing:3px;margin:10px 0 5px;text-transform:uppercase">$1</div>')
+    .replace(/^[-—•] (.+)$/gm,'<div style="padding:2px 0 2px 14px;position:relative"><span style="position:absolute;left:0;color:var(--gold)">▸</span>$1</div>')
+    .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showTyping() {
+  const c = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'msg ai'; d.id = 'typing';
+  const w = document.createElement('div'); w.className = 'msg-who'; w.textContent = '[ KAALVEYR ]';
+  const b = document.createElement('div');
+  b.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+  d.appendChild(w); d.appendChild(b);
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+
+function removeTyping() { const e = document.getElementById('typing'); if(e) e.remove(); }
+
+async function sendMsg() {
+  const inp = document.getElementById('chat-in');
+  const btn = document.getElementById('send-btn');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = ''; inp.style.height='auto';
+  addMsg('user', text);
+  history.push({ role:'user', content:text });
+  btn.disabled = true;
+  showTyping();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:SYSTEM,
+        messages:history
+      })
+    });
+    const data = await res.json();
+    removeTyping();
+    if (data.content?.[0]) {
+      const reply = data.content[0].text;
+      history.push({ role:'assistant', content:reply });
+      addMsg('ai', reply);
+      if (S.voiceResponse) speak(reply.replace(/<[^>]+>/g,'').replace(/\*\*/g,'').replace(/\*/g,''));
+    } else {
+      addMsg('ai', '**SYSTEM DISRUPTION** — Connection severed. Retry.');
+    }
+  } catch(e) {
+    removeTyping();
+    addMsg('ai', `**CONNECTION FAILURE**\n\n\`${e.message}\``);
+  }
+
+  btn.disabled = false;
+}
+
+function qp(p) { tab('kaalveyr'); document.getElementById('chat-in').value = p; sendMsg(); }
+function handleKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
+function autoGrow(el) { el.style.height='auto'; el.style.height = Math.min(el.scrollHeight,100)+'px'; }
+
+// ============================================================
+// VOICE
+// ============================================================
+let recognition = null;
+let synth = window.speechSynthesis;
+
+function toggleMic() {
+  if (S.listening) stopMic();
+  else startMic();
+}
+
+function startMic() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    showToast('Voice not supported in this browser'); return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    S.listening = true;
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('v-dot').classList.add('on');
+    document.getElementById('v-status').textContent = 'LISTENING';
+  };
+
+  recognition.onresult = (e) => {
+    const transcript = e.results[0][0].transcript;
+    document.getElementById('chat-in').value = transcript;
+    stopMic();
+    sendMsg();
+  };
+
+  recognition.onerror = () => stopMic();
+  recognition.onend = () => stopMic();
+  recognition.start();
+}
+
+function stopMic() {
+  S.listening = false;
+  if (recognition) recognition.stop();
+  document.getElementById('mic-btn').classList.remove('listening');
+  document.getElementById('v-dot').classList.remove('on');
+  document.getElementById('v-status').textContent = 'STANDBY';
+}
+
+function toggleVoiceResponse() {
+  S.voiceResponse = !S.voiceResponse;
+  document.getElementById('voice-toggle').classList.toggle('on', S.voiceResponse);
+  showToast(S.voiceResponse ? 'Voice response ENABLED' : 'Voice response OFF');
+}
+
+function speak(text) {
+  if (!synth) return;
+  synth.cancel();
+  const utter = new SpeechSynthesisUtterance(text.substring(0, 600));
+  utter.rate = 0.92;
+  utter.pitch = 0.85;
+  utter.volume = 0.95;
+  const voices = synth.getVoices();
+  const pref = voices.find(v => v.name.includes('Daniel') || v.name.includes('David') || v.lang === 'en-GB');
+  if (pref) utter.voice = pref;
+  synth.speak(utter);
+}
+
+function testVoice() {
+  speak('Kaalveyr online. All systems operational. Your ascension protocols are active. Execute.');
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function tab(id) {
+  document.querySelectorAll('.nav-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['overview','tasks','kaalveyr','ascension'][i] === id);
+  });
+  document.querySelectorAll('.main').forEach(m => m.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+// ============================================================
+// CLOCK
+// ============================================================
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    [n.getHours(), n.getMinutes(), n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+function boot() {
+  S.discipline = 58;
+  S.lockin = 62;
+  S.momentum = 30 + S.streak * 4;
+  S.body = 55; S.mind = 48; S.career = 42; S.finance = 38; S.lang = 45;
+
+  setTimeout(() => {
+    setRing('discipline', S.discipline);
+    setRing('lockin', S.lockin);
+    setRing('momentum', Math.min(99, S.momentum));
+    setSbar('body', S.body);
+    setSbar('mind', S.mind);
+    setSbar('career', S.career);
+    setSbar('finance', S.finance);
+    setSbar('lang', S.lang);
+    document.getElementById('v-gym').textContent = '—';
+    document.getElementById('v-sleep').textContent = '—';
+    document.getElementById('v-water').textContent = '—';
+    document.getElementById('v-pullups').textContent = '0';
+    document.getElementById('streak-num').textContent = S.streak;
+    document.getElementById('today-xp').textContent = S.todayXp;
+  }, 300);
+
+  renderTasks();
+  renderStreaks();
+  renderRankLadder();
+  renderMatrix();
+  renderGoals();
+  updateHeader();
+
+  // Boot message
+  const boot = `<strong>KAALVEYR ONLINE.</strong><br><br>
+Ascension protocols initialized. All subsystems active.<br><br>
+<strong>Current Status:</strong><br>
+▸ Rank: <em>OPERATOR</em> — 260 XP from STRATEGIST<br>
+▸ Discipline: <em>58%</em> — Acceptable. Must be higher.<br>
+▸ Streak: <em>12 days</em> — Protect this at all costs.<br>
+▸ Today's XP: <em>0</em> — No tasks completed yet.<br><br>
+Your 30-day HR Tech lock-in is active. Every task completed advances your ascension.<br><br>
+Issue your first command.`;
+
+  addMsg('ai', boot, true);
+}
+
+boot();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js")
+      .then(() => console.log("KAALVEYR SW registered"))
+      .catch(e => console.log("SW error:", e));
+  });
+}
+</script>
+</body>
+</html>

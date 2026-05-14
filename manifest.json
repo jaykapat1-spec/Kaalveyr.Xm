@@ -1,0 +1,26 @@
+{
+  "name": "KAALVEYR — Personal Ascension System",
+  "short_name": "KAALVEYR",
+  "description": "Supreme AI overseer and personal ascension system",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#03030a",
+  "theme_color": "#c8a97e",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
